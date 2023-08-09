@@ -1,0 +1,46 @@
+---
+title: "Introduction to R - Before we start"
+subtitle: "BUGS Workshop"
+author: '[Dominique Maucieri](https://www.dominiquemaucieri.com)'
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+Welcome to this setup to this Introduction to R workshop. Whether you have used R before or if this is your first time every downloading R, there are a few things for you to do before our tutorial to make sure everything will run smoothly. 
+
+
+# Downloading the software
+
+We are going to be using R as well as R Studio to make our R experience a bit more user friendly. 
+
+**IF YOU HAVE USED R AND RSTUDIO BEFORE, I WANT YOU TO GO INTO YOUR COMPUTER APPLICATIONS AND DELETE THE PROGRAMS** We are all going to start fresh so we have the most up to date versions and are all running the same things. 
+
+## Downloading R
+
+To download R, we are going to go to the CRAN website [https://cran.r-project.org/](https://cran.r-project.org/) and download the newest version for your computer. At the time of creating this workshop the current version is **R 4.3.1** When you have R downloaded, it should open without issues and show you this very not pretty script (Figure 1). Now if this works and looks like Figure 1, great, close R and never open it in this way again. 
+
+![When R opens it should look like this](images/R_Open.jpg){width="50%"}
+
+### Troubleshooting
+
+- Is your computer up to date? 
+
+- Are you downloading the right version for your computer? Mac vs Windows, Intel vs M1/M2? 
+
+- If your computer is older and cannot have the most current software, you will need to download an older version of R that will be supported by your operating system
+
+
+## Downloading RStudio
+
+In order to make R user friendly, we will be using R Studio to help us run R. This is *technically* optional but I really don't recommend using R on its own, you will have more errors, more difficulty troubleshooting errors and you will have to do a lot more by hand.
+
+To download RStudio we are going to go to the posit website [https://posit.co/downloads/](https://posit.co/downloads/). Download the version for your computer and then open this application when you have downloaded it. If it works you should have a lovely RStudio environment that looks a little something like Figure 2. 
+
+![When RStudio opens it should look like this](images/RStudio_Open.jpg){width="50%"}
+
