@@ -1,0 +1,12 @@
+\contentsline {section}{R etiquette and setting up your code}{1}{section*.2}%
+\contentsline {subsection}{Set up}{1}{section*.3}%
+\contentsline {subsection}{Creating an outline}{2}{section*.4}%
+\contentsline {subsection}{Importing data}{2}{section*.5}%
+\contentsline {subsubsection}{Setting the working directory}{2}{section*.6}%
+\contentsline {subsubsection}{Importing csv and excel data}{3}{section*.7}%
+\contentsline {paragraph}{.csv}{3}{section*.8}%
+\contentsline {paragraph}{.excel}{4}{section*.9}%
+\contentsline {section}{Types of Objects and Elements}{4}{section*.10}%
+\contentsline {section}{Math in R}{9}{section*.11}%
+\contentsline {section}{Summary Statistics}{9}{section*.12}%
+\contentsline {section}{Data Manipulation}{12}{section*.13}%

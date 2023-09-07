@@ -1,0 +1,380 @@
+---
+title: "Introduction to R"
+subtitle: "BUGS Workshop - Fall 2023"
+author: '[Dominique Maucieri](https://www.dominiquemaucieri.com)'
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+
+**********
+
+Welcome to this Introduction to R workshop. 
+
+```{r environment setup, include = FALSE}
+
+#setting global options
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, tidy = TRUE, message=FALSE)
+
+#To clear the workspace
+rm(list = ls(all = T))
+
+```
+
+
+# R etiquette and setting up your code
+
+## Set up
+
+Lets start by making a new script for this tutorial. We will open a new script file and save it as BUGS_workshop.R
+
+Now to set up this script, the first thing you always want to do in every new script, is put a description at the top of your script explaining what this script contains. Anything on a line following a # will be a comment, this code will not run, it will just be a note to anyone reading the code. For this workshop we can put a description kinda like this:
+
+```{r}
+# This code is from the UVic BUGS Introduction to R Workshop 
+# Workshop led by Dominique Maucieri (dominiquemaucieri@gmail.com)
+# 28-10-2023
+```
+
+The next thing you will put at the top of your code is **ALL** your packages. Packages are extensions to R what will contain things like code and data that we can use in our coding. They will often contain a bunch of different functions which will allow us to easily perform different tasks without coding them by hand. In the BEFORE_THE_WORKSHOP.pdf file, you would have been instructed to download a bunch of packages. We will be using these packages today to help us quickly perform task. It is proper etiquette to load all these packages at the start of your code so that someone else wanting to run your code will know what packages to download before starting. As you get better at coding you will know which packages you will want to use before you start, but as you learn, just keep scrolling to the top of your script and add packages as you need them.
+
+For our workshop we will be using the dplyr, tidyr, ggplot2 and readxl packages, so lets load these and add them to the start of our script:
+
+```{r}
+
+# Packages ----
+library(dplyr)
+library(ggplot2)
+library(readxl)
+library(tidyr)
+
+```
+
+## Creating an outline
+
+If you notice after the comment were I specified the following code was packages, there are 4 "-". This will create a new section in your code. If you open the outline, which is located at the top right of your script, you can see the outline of your code. This is super helpful when you start getting long code scripts, because you can easily jump around your code. 
+
+
+## Importing data
+
+### Setting the working directory
+
+In order to import data, we have to know where the data is located on your computer. When your import data, you will use code to tell R the location of the data on your computer to open and load into your working environment so you can use it in R. First you need to know the location on your computer where R is currently "looking", known as your working directory. Good protocol is to have your data in the same folder as where you saved your script file, or in a data folder within the folder that your script file is saved in. 
+
+To figure out where your working directory is we can use this code:
+```{r}
+# Importing data ----
+getwd() #where is my current working directory
+```
+
+For me, this folder "UVIC_BUGS_RIntro" is the folder where I have put the script we are using for today's workshop and it is also where I have the data we are going to import for today's workshop. For you however, this might not be the right spot. So if we need to change the working directory, there are a few ways:
+
+
+1. Code. This is the toughest to work your head around but it works. You would use the setwd() and the file path to your script folder (this should also be where your data is, if not move your data into the same folder). You always put the filepath in quotations, and for my folder it would look like this:
+
+```{r}
+setwd("~/Library/CloudStorage/Dropbox/Documents/GitHub/UVic_BUGS_RIntro")
+```
+
+Now often the issue with this method is your probably thinking well how do I get this file path? If you don't have a good understanding of file paths and how your computer works, this can seem very difficult, but there are a few short cuts to make this easier.
+
+2. Using the File viewer pane. In the bottom right of your screen, there should be the files viewer. We can use this to move around on your computer and set your new working directory. Open files until you find the folder with your script and data. Then click the gear icon at the top of the file pane, and select "Set As Working Directory". This will run the line of code needed to set this folder as your working directory. Now important to remember to take the code outputted into your console, and paste it into your script so every time your come back to this code, you can set your working directory again. 
+
+3. Using the session options. At the top of your RStudio, go to Session > Set Working Directory > Choose Directory... Then you can move around on your computer until you find the folder with your script and data. This will run the line of code needed to set this folder as your working directory. Now important to remember to take the code outputted into your console, and paste it into your script so every time your come back to this code, you can set your working directory again. 
+
+**TASK**
+
+Set your working directory to the folder where you have your script and data located. 
+
+
+### Importing csv and excel data
+
+There are many types of files you may want to import into R to use, and for this tutorial we will go through two formats of data, comma separated values (csv) and excel files. The biggest thing to figure out is where your data is in relation to where you working directory has been sent. The easiest is for the working directory to be set to the same location as your data. 
+
+#### .csv
+
+To import data that has been saved as a .csv file, we will use the read.csv() function. If this data is located in the same folder as your working directory has been set to (which it should be after the task above) we will import the file as follows:
+
+```{r, eval=FALSE}
+
+shark_data <- read.csv("LPD_Sharks_CPUE.csv")
+
+```
+
+But perhaps this data is in a folder called data, which is located in your working directory. This is how my data is always stored, so in order to import it, I have to set the file path as within a folder like this:
+
+```{r}
+
+shark_data <- read.csv("data/LPD_Sharks_CPUE.csv")
+
+```
+
+Troubleshooting:
+
+- Always make sure the files are spelt the same way
+
+- Make sure you include the extention (.csv)
+
+- Make sure it is in quotes
+
+Notice that we stored this data into an object called "shark_data". This should now show up in your environment window as data. This means that anywhere you use the word shark_data in your code after now, it will reference this data. 
+
+This data comes from the Living Planet Database (https://www.livingplanetindex.org/) and is a cleaned up version where I have subsetted out some shark abundance data for us to look at. 
+
+#### .excel
+
+Importing excel files are very similar, they will just use a different function, read.excel() and the .xls or .xlsx file extension:
+
+```{r}
+
+shark_data <- read_excel("data/LPD_Sharks_CPUE.xlsx")
+
+```
+
+Yay! Now we have data to work with in R. But what to do next? Well we need to look at this data and explore it a bit. There are many ways to do this. The first will be to just open the data frame and scroll around it. To open the data frame we can do a few things:
+
+1. Over in the environment tab, we can click on the data frame we want to examine.
+
+2. In the console or our script we can use the View() function to view our data, with the name of the data frame object we want to open and view within the brackets of the View() function. 
+
+**TASK**
+
+Try to open the data frame to view it using a few different methods.
+
+**********************
+
+# Types of Objects and Elements
+
+There are a few types of objects you will come across in R. These will be data frames, matrices, vectors and lists.
+
+* A vector is like a single string of variables, like a single row of data, one dimension. 
+
+* Data frames are what we have already encountered, it has rows and columns, two dimensions, and it can be a mix of numbers and characters
+
+* Matrices like data frames with rows and columns but they only contain one type of data, so all numbers or all characters
+
+* Lists are like a bunch of data frames all stacked on top of each other, three dimensions, but we won't be working with lists for this. 
+
+
+As eluded to above, there are different types of data as well. We can have numeric, integer, logical, character and factor type data.
+
+* Numeric is numbers, they contain decimals and are continuous. Examples are length measures or heights
+
+* Integers are whole numbers, no decimals but still numbers. Example would be the year for your data. 
+
+* Logical data is TRUE / FALSE data
+
+* Characters are text, known as strings in R, which can be words or a jumble of various letters and symbols, but this data is not being treated as a number and has no order to it. Characters are shown with quotes around them so R knows to treat it as a character. Examples could be site names or species names. "Site1"
+
+* Factors are also text, like characters but they have a set order to them. The default order will be alphabetical but you can change this in R so it makes more sense. Example would be treatments, like before and after, you would want before to be order before after or it won't make sense for something like a plot. 
+
+
+To create a vector, we can use the c() function to combine a bunch of elements together and assign them to an object with the arrow operator <-
+
+```{r}
+fruit <- c("apple", "banana", "pear")
+
+#then calling the object name will output the vector values in your console
+fruit
+
+leaf_lengths <- c(4.5, 7.2, 4, 5.4)
+
+leaf_lengths
+
+```
+
+**TASK**
+
+Try making your own object that contains both characters and numeric data.
+
+***********
+
+
+It is easy to change the type of data to something else. Sometimes R will read in your numbers as characters or you might want to change your characters to a factor. So to this, first you need to know how R is currently classifying your data. To see this we can use class() or str(). I like str() because it gives a bit more information, but either works.
+
+```{r}
+
+class(leaf_lengths)
+
+str(fruit)
+
+```
+
+so leaf_length is a numeric vector and fruit is a character vector. To change to a different type of data you use as.******() with the asterics being the new data type. So as.numeric() or as.factor() etc. Lets turn fruit into a factor, and assign it to a new operator called fruit_fact
+
+```{r}
+fruit_fact <- as.factor(fruit)
+
+str(fruit_fact)
+```
+
+Now when we want to change how a column in a data frame is being treated by R, we have to select that specific column. We can select a column within a data frame using the $
+
+```{r}
+shark_data$Common_name
+```
+
+This will select only one column within the data frame. So we could examine they type of data for the whole data frame or just a single column. However, class() of a data frame will tell you that it is a data frame, not the type of data in each column like str() will. 
+
+```{r}
+class(shark_data)
+str(shark_data)
+
+class(shark_data$Common_name)
+str(shark_data$Common_name)
+```
+
+Now did you see what Year was being treated as? It was treated as numeric, but maybe we want it as an integer. So to change it to an integer we have to use the as.integer() on only that column and assign it to a single column. 
+
+```{r}
+shark_data$Year <- as.integer(shark_data$Year)
+str(shark_data$Year)
+```
+
+# Math in R
+
+R can be used as a fancy calculator, and common math expressions will work within your code. 
+
+* a * will multiply
+
+* a / will divide
+
+* a - will subtract
+
+* a + will add
+
+* exp() is an exponent
+
+* pi() is the complete unrounded pi
+
+* brackets work using BEDMAS
+
+**TASK**
+
+complete some simple math expressions like 4 + 7
+
+****************
+
+
+
+# Summary Statistics
+
+With new data, it can be helpful to generate some summary statistics to explore your data and understand what the data looks like. Some helpful summary statistic functions can be:
+
+* nrow() and ncol()
+
+These two functions will tell you the number of rows and number of columns in a data frame respectively. 
+
+```{r}
+
+ncol(shark_data)
+
+```
+
+**TASK** 
+
+Determine the number of rows in the shark data frame. 
+
+*****************
+
+* unique()
+
+This is one of my favorites and it will help to identify all the unique values within an object. However, it might at first seem unhelpful like this:
+
+```{r}
+unique(shark_data)
+```
+
+This will just output the whole data frame, not helpful. But if we select one column using a $ it will give us more information.
+
+```{r}
+unique(shark_data$Common_name)
+```
+Now we can see all the different common names for sharks in this data set.
+
+**TASK**
+
+What are the different Countries in this data set?
+
+
+**************
+
+* mean(), max(), min(), median()
+
+These will compute these basic mathematical equations on the data given to the function to summarize your data. Note for these you will need to give the function ONLY numeric data (numbers only no words). So to use mean() we should select the Abundance column. 
+
+```{r}
+mean(shark_data$Abundance)
+```
+Now we know the mean abundance (catch per unit effort) for sharks in the whole data frame is 0.614
+
+**TASK**
+
+Determine the min, max and median for the abundance of sharks in the whole data frame.
+
+******************
+
+* length()
+
+This function will give the length of elements within an object. However this will tell us different things based on whether we have a data frame object or a vector. 
+
+Lets start by looking at the length of the shark data
+
+```{r}
+length(shark_data)
+```
+
+15? Does this look like a number we have seen before? It should because its the number of columns. So in a data frame, length() will tell us the number of columns. Now lets try selecting a single column in this function.
+
+```{r}
+length(shark_data$ID)
+```
+
+This should also look familiar because its the number of rows, so there are 220 elements in this column, which would be 220 rows. 
+
+We can also get the length of vectors.
+
+**TASK**
+
+Determine the length of the vector fruit
+
+***************
+
+
+* sum()
+
+This can be used to sum a column or a vector.
+
+**TASK**
+
+Try using sum() to sum our leaf_length vector.
+
+***********
+
+# Data Manipulation
+
+One initial thing that can be very helpful is manipulating your data so you can get it into the format you want to calculate more summary statistics. Like what if you wanted to know the average abundance of sharks for each country? or in each year? To help with this we can use:
+
+* filter()
+
+* select()
+
+* group_by()
+
+* summarize()
+
+
+
+
+
+To accomplish 
+
+- histogram
+- stats
+- graph summary stats
