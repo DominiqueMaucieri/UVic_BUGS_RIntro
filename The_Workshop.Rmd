@@ -147,6 +147,11 @@ Yay! Now we have data to work with in R. But what to do next? Well we need to lo
 
 Try to open the data frame to view it using a few different methods.
 
+```{r, include = FALSE}
+View(shark_data)
+```
+
+
 **********************
 
 # Types of Objects and Elements
@@ -191,7 +196,16 @@ leaf_lengths
 
 **TASK**
 
-Try making your own object that contains both characters and numeric data.
+Try making your own object that contains both characters and numeric data. Then look at the structure of this object, what type of data does it contain?
+
+```{r, include = FALSE}
+new_object <- c("cat", 7, "dog", 1, "bird", 4)
+
+str(new_object)
+
+# it contains characters
+```
+
 
 ***********
 
@@ -259,15 +273,19 @@ R can be used as a fancy calculator, and common math expressions will work withi
 
 complete some simple math expressions like 4 + 7
 
+```{r, include = FALSE}
+7 / 3
+```
+
 ****************
 
 
 
-# Summary Statistics
+# Summary Functions
 
 With new data, it can be helpful to generate some summary statistics to explore your data and understand what the data looks like. Some helpful summary statistic functions can be:
 
-* nrow() and ncol()
+## nrow() and ncol()
 
 These two functions will tell you the number of rows and number of columns in a data frame respectively. 
 
@@ -281,9 +299,16 @@ ncol(shark_data)
 
 Determine the number of rows in the shark data frame. 
 
+```{r, include = FALSE}
+
+nrow(shark_data)
+
+```
+
+
 *****************
 
-* unique()
+## unique()
 
 This is one of my favorites and it will help to identify all the unique values within an object. However, it might at first seem unhelpful like this:
 
@@ -302,10 +327,22 @@ Now we can see all the different common names for sharks in this data set.
 
 What are the different Countries in this data set?
 
+```{r, include = FALSE}
+unique(shark_data$Country)
+```
 
 **************
 
-* mean(), max(), min(), median()
+## names()
+
+This function is useful for determining what the column names in your data set are.
+
+```{r}
+names(shark_data)
+```
+
+
+## mean(), max(), min(), median()
 
 These will compute these basic mathematical equations on the data given to the function to summarize your data. Note for these you will need to give the function ONLY numeric data (numbers only no words). So to use mean() we should select the Abundance column. 
 
@@ -318,9 +355,19 @@ Now we know the mean abundance (catch per unit effort) for sharks in the whole d
 
 Determine the min, max and median for the abundance of sharks in the whole data frame.
 
+```{r, include = FALSE}
+min(shark_data$Abundance)
+#0
+max(shark_data$Abundance)
+#4.05
+median(shark_data$Abundance)
+#0.30735
+```
+
+
 ******************
 
-* length()
+## length()
 
 This function will give the length of elements within an object. However this will tell us different things based on whether we have a data frame object or a vector. 
 
@@ -344,16 +391,28 @@ We can also get the length of vectors.
 
 Determine the length of the vector fruit
 
+```{r, include = FALSE}
+length(fruit)
+# 3
+```
+
+
 ***************
 
 
-* sum()
+## sum()
 
 This can be used to sum a column or a vector.
 
 **TASK**
 
-Try using sum() to sum our leaf_length vector.
+Try using sum() to sum our leaf_lengths vector.
+
+```{r, include = FALSE}
+sum(leaf_lengths)
+# 21.1
+```
+
 
 ***********
 
@@ -361,20 +420,132 @@ Try using sum() to sum our leaf_length vector.
 
 One initial thing that can be very helpful is manipulating your data so you can get it into the format you want to calculate more summary statistics. Like what if you wanted to know the average abundance of sharks for each country? or in each year? To help with this we can use:
 
-* filter()
+## filter()
 
-* select()
+The filter() function can be used to filter your data set. So you can filter out certain rows so you only have attributes you want. We will take our shark data and filter out the "Whale shark" rows from the Common_name column and name this object whale_sharks. This is very useful for creating subsets of your original data. So we are looking for where Common_name is equal to "Whale shark" 
 
-* group_by()
+```{r}
+whale_sharks <- filter(shark_data, Common_name == "Whale shark")
 
-* summarize()
+View(whale_sharks)
+```
+
+We can also filter with multiple criteria, we could filter out all "Shortfin mako" data that also has an abundance over 1 CPUE.
+
+```{r}
+abund_short_mako <- filter(shark_data, 
+                           Common_name == "Shortfin mako" & 
+                             Abundance >= 1)
+```
+
+Some important symbols for the filter() are:
+
+* "==" is equals exactly (a single = will not work in this usage)
+
+* "!=" is does not equal
+
+* ">" is greater than
+
+* "<" is less than
+
+* ">=" is greater than or equal to
+
+* "<=" is less than or equal to
+
+* "&" is and
+
+* "|" is or
+
+you can use any of these within the filter function to define what you are filterin out of a column. 
+
+**TASK**
+
+Filter the shark data so there is only data from after 2010, and that the data set does not include the "International Waters" Region. Name this object Recent_Coastal_Sharks. Then check using functions to ensure this is correct
+
+```{r, include = FALSE}
+
+Recent_Coastal_Sharks <- filter(shark_data, Year > 2010 & 
+                                  Region != "International Waters")
+
+unique(Recent_Coastal_Sharks$Region)
+min(Recent_Coastal_Sharks$Year)
+
+```
 
 
+**************
+
+## select()
+
+The select() can be used to select columns from your data, or to remove columns from your data. We will select the common name and abundance column for one data frame and for another we will select all except the ID column.
+
+```{r}
+
+simple_shark_data <- select(shark_data, Common_name, Abundance)
+# you can list as many columns as you want, just make sure they are
+# spelled correctly and separated by a comma
+
+head(simple_shark_data) # this will show us the frist 6 rows of our data frame
+
+shark_data_noID <- select(shark_data, -ID)
+
+head(shark_data_noID)
+
+```
 
 
+## group_by()
 
-To accomplish 
+The group_by() is useful when paired with a summarize function which we will learn next. This function will group your data based on the different values in a column. So for our data we could group our data by Common_name. This will mean we can then apply the summarize function to each different group in the Common_name column. So we could do something like average the abundance of each species of shark. Very useful. First lets group our data by the Common_name and call it sharks_grouped.
 
-- histogram
-- stats
-- graph summary stats
+```{r}
+sharks_grouped <- group_by(shark_data, Common_name)
+# you can group by as many columns as you would like, just make sure they
+# spelled correctly and separated by a comma
+
+#now to check that our data is grouped we can call the structure
+str(sharks_grouped)
+```
+Great, now we can see that they type of data set has changed to a grouped data set.
+
+## summarize()
+
+Now lets use the summarize function to average the abundance of our sharks. We get to pick the column name we want to have R put these new averages in, I am going to choose Average_Abund
+
+```{r}
+shark_averages <- summarize(sharks_grouped, Average_Abund = mean(Abundance))
+
+shark_averages
+```
+
+Our final data frame should look like this, if you only have one single value, you probably used the original shark_data data frame so it just took an average of the entire data set, make sure you use the grouped data frame.
+
+## mutate()
+
+The last function we will talk about before discussing how to make this process quicker is the mutate(). This can be used to mutate columns and create new columns. 
+
+## Combining with a Pipe
+
+# Plotting Data
+
+## Histogram
+
+## Scatter Plot
+
+## Box Plot
+
+# Stats Intro
+
+## Normality Test
+
+## Homocedasticity Test
+
+## T-test
+
+## ANOVA and Tukey Test
+
+## cor.test
+
+## regression
+
+# Now What?
