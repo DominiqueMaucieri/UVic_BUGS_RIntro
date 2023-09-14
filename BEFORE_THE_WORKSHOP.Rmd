@@ -82,13 +82,16 @@ install.packages("plyr")
 install.packages("ggplot2")
 install.packages("readxl")
 install.packages("tidyr")
+install.packages("car")
+install.packages("palmerpenguins")
 
 #Accessing each package to check that the install worked
 library(dplyr)
 library(ggplot2)
 library(readxl)
 library(tidyr)
-
+library(car)
+library(palmerpenguins)
 
 ```
 
@@ -102,6 +105,8 @@ library(dplyr)
 library(ggplot2)
 library(readxl)
 library(tidyr)
+library(car)
+library(palmerpenguins)
 
 ```
 

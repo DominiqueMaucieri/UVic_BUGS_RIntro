@@ -53,6 +53,10 @@ library(dplyr)
 library(ggplot2)
 library(readxl)
 library(tidyr)
+library(car)
+library(palmerpenguins)
+#install.packages("dunn.test") #you may need to install this package if you haven't before
+library(dunn.test)
 
 ```
 
@@ -522,30 +526,455 @@ Our final data frame should look like this, if you only have one single value, y
 
 ## mutate()
 
-The last function we will talk about before discussing how to make this process quicker is the mutate(). This can be used to mutate columns and create new columns. 
+The last function we will talk about before discussing how to make this process quicker is the mutate(). This can be used to mutate columns and create new columns. Maybe we want to get a log transformed abundance column, we can do this with the mutate function. We get to specify what the new column will be, for use we will call it log_Abundance and then you specify what the formula will be to mutate a column.
+
+```{r}
+shark_data_log <- mutate(shark_data, log_Abundance = log(Abundance))
+
+str(shark_data_log)
+```
+
 
 ## Combining with a Pipe
 
+Doing each of these data manipulation steps individually is fine, but it will take a lot of intermediate data objects. This can clutter up your environment and make it quite hard to pick a new name for you data set after you have gone through 12 different names. Instead we can use a pipe (%>%) to feed our first line into the second and so forth to combine all these different steps together. So instead of doing a new data frame after a filter, group_by and summarize, we can do all three of those steps together and name them sharks_summarized. With this, the intermediate data frames don't need to be saved as an object, and you don't have to specify the data frame for each set. 
+
+```{r}
+sharks_summarized <- shark_data %>%
+  filter(Region != "International Waters") %>%
+  group_by(Common_name) %>%
+  summarise(Average_Abund = mean(Abundance))
+
+head(sharks_summarized)
+```
+
+In this pipe you can now see that we only specify shark_data at the start, then that data set is fed into the next line with the pipe to filter our data, that filtered data is fed into the group_by() and that grouped data is fed into the final summarize() function and that result is what is saved into the object sharks_summarized.
+
+**TASK**
+
+Your turn, create one object regional_shark_abund where I want you to use pipes to filter all data after 2000 from the shark_data data frame, group by Region and Year, then sum all the abundance so we get the total shark abundance in CPUE for each region in each year after 2000.
+
+```{r, include = FALSE}
+regional_shark_abund <- shark_data %>%
+  filter(Year > 2000) %>%
+  group_by(Region, Year) %>%
+  summarise(Total_Abund = sum(Abundance))
+
+head(regional_shark_abund)
+```
+
+
+
+************
+
 # Plotting Data
+
+To plot data we are going to use the ggplot2 package, which is a great package for data visualization. All ggplots are built up in layer, and you keep adding layers to your plot until it looks like the plot you want. You can save your plots as an object so you can export them later, or just have them output without saving. 
 
 ## Histogram
 
+The steps for making these plots is to first specify you are making a plot with the ggplot(). You specify which data frame you want to plot data from, and then specify the aes() or aesthetics of your plot. This is where you tell R which columns in the data set are going on the x axis, y axis, or are to be used as a color or shape argument. We will start by making a histogram of our abundance data, so this will only have an x axis, which will be abundance. 
+
+```{r}
+Hist_step1 <- ggplot(shark_data, aes(x = Abundance))
+
+Hist_step1
+```
+
+Now we have a blank plot, because R doesn't know what kind of plot it is making, so the next line will be to add a geometric argument to specify it is a histogram we are making. We will also add in an argument about number of bins which you can play with the change how many histogram bins are being made. 
+
+```{r}
+Hist_step2 <- ggplot(shark_data, aes(x = Abundance)) +
+  geom_histogram(bins = 20)
+
+Hist_step2
+```
+Yay, its a plot! Now lets make it a bit nicer and more customized. There are many themes that have been made already which we can use to make our plots more aesthetic, I like theme_classic(). We can also use the labs() to change our axis labels.
+
+```{r}
+Hist_step3 <- ggplot(shark_data, aes(x = Abundance)) +
+  geom_histogram(bins = 20) +
+  theme_classic() +
+  labs(x = "Shark Abundance (CPUE)", 
+       y = "Count")
+
+Hist_step3
+```
+
+Another thing we can do is add a color to this plot. We could change all the color of the bins to say a darkpurple by adding a fill argument to the geom_histogram()
+
+```{r}
+Hist_darkpurple <- ggplot(shark_data, aes(x = Abundance)) +
+  geom_histogram(bins = 20, fill = "purple") +
+  theme_classic() +
+  labs(x = "Shark Abundance (CPUE)", 
+       y = "Count") 
+Hist_darkpurple
+```
+
+or maybe we want each region to be its own fill color. If we want the fill to change based on a variable, this needs to be put in the aesthetics statement.
+
+```{r}
+Hist_regions <- ggplot(shark_data, aes(x = Abundance, fill = Region)) +
+  geom_histogram(bins = 20) +
+  theme_classic() +
+  labs(x = "Shark Abundance (CPUE)", 
+       y = "Count") 
+Hist_regions
+```
+
+This if getting there but it is a bit difficult to actually see the different distributions of the various regions. The last think we will add to this will be a facet_wrap() which will create a new mini figure for each attribute of a variable.
+
+```{r}
+
+Hist_wrap <- ggplot(shark_data, aes(x = Abundance, fill = Region)) +
+  geom_histogram(bins = 20) +
+  theme_classic() +
+  labs(x = "Shark Abundance (CPUE)", 
+       y = "Count") +
+  facet_wrap(~Region)
+Hist_wrap
+
+```
+Beautiful! There are ways to customize which colors are used so if you are interested in that, I would recommend a little google. The final step will be to save this figure. We will use the jpeg() to save as it is very simple and we can customize the size, resolution and location we save the figure to. Since we are using jpeg() we will have to save our image with a .jpeg extension. You could use png() or tiff() just make sure you change the file extension. We will name the file Histogram_Example.jpeg, and specify the width and height in inches and a resolution in DPI. Then the next line is where we call the plot, and the final line is dev.off() which will just close the saving process. You have to run all the lines together for it to work best. This will save the figure right to your working directory, so make sure this is set right, and if you want it in a folder, make sure you change the filename to reflect that. 
+
+```{r}
+jpeg(filename = "Histogram_Example.jpeg", 
+     units = "in", width = 8, height = 6, res = 300)
+Hist_wrap
+dev.off()
+
+```
+
 ## Scatter Plot
+
+Scatter plots are very similar to histograms, except you have to specify which variable is on the y axis and also instead of geom_histogram() you use geom_point() to add points to your plot. We will plot the abundance by year.
+
+```{r}
+
+Scatter_step1 <- ggplot(shark_data, aes(x = Year, y = Abundance)) +
+  geom_point()
+
+Scatter_step1
+
+```
+
+And you can use all the same code from the histogram example to customize this plot too. For geom_point() to change the color you will use a color argument in the aesthetic (instead of fill)
+
+```{r}
+
+Scatter_clean <- ggplot(shark_data, aes(x = Year, y = Abundance, color = Region)) +
+  geom_point() +
+  theme_classic() +
+  labs(x = "Year",
+       y = "Shark Abundance (CPUE)")
+
+Scatter_clean
+
+```
 
 ## Box Plot
 
+Box plot will work the same way but instead of geom_histogram() or geom_point(), it is geom_boxplot() and it will use a fill aesthetic argument instead of color. Here we will plot abundance by country
+
+```{r, fig.width=12}
+Boxplot_clean <- ggplot(shark_data, aes(x = Country, y = Abundance, fill = Region)) +
+  geom_boxplot() +
+  theme_classic() +
+  labs(x = "Region",
+       y = "Shark Abundance (CPUE)")
+
+Boxplot_clean
+```
+
+Making figures can start very simple and you can slowly increase the complexity. 
+
+**TASK**
+
+Time to try to make your own figure. Try making a scatter plot that plots shark abundance by year, but has a facet of each region and each point is colored by the country. 
+
+```{r, include = FALSE}
+
+Scatter_task <- ggplot(shark_data, aes(x = Year, y = Abundance, color = Country)) +
+  geom_point() +
+  theme_classic() +
+  labs(x = "Year",
+       y = "Shark Abundance (CPUE)") +
+  facet_wrap(~Region)
+
+Scatter_task
+
+```
+
+
+************
+
+
 # Stats Intro
 
-## Normality Test
+Now I don't want to go into the theory behind each of these test for this workshop as the goal is to learn how to code. So if you don't know what these tests are or what the different assumptions are of these tests, I highly recommend reading up on them before you conduct them on your own data. We are going to use some different data for the stats portion, penguins, this data is already in R and we have already loaded the package from R so to access it all we have to do is call on the data. There are a lot of fun variables in this data but we will be examining the flipper_length_mm to start and will add in bill_length_mm later. But feel free to explore this data more on your own.
 
-## Homocedasticity Test
+```{r}
+data(penguins)
 
-## T-test
+head(penguins)
+```
 
-## ANOVA and Tukey Test
+
+## T-test and Wilcoxon rank sum test
+
+First we will examine a two-sample t-test and its non-parametric equivalent, the Wilcoxon rank sum test. These tests are for determining differences between two groups of numeric data.
+
+There are three kinds of t-tests. A two sample t-test means we have two groups, while a one sample t-test looks at one group compared to a constant, usually a known "true" mean. The other kind is a paired test, which is usually a before and after style experiment where you want to know if something had an effect so you compare before and after application. 
+
+Two sample t-tests are the most common kind of t-tests because we are often trying to figure out if the mean of two groups differ from each other. For our example we will look at the difference in mean flipper length between the Adelie and Chinstrap penguins. We will create two data sets, one for each penguin species, as well one that contains both penguin species.
+
+The difference between a two-sample t-test and a Wilcoxon test is the underlying assumptions. T-tests have the assumption that each group in the data is normal and that the groups have equal variance between them. Alternatively the Wilcoxon test does not have these assumptions, but may not be as powerful of a test, so you may not find a difference that exists. So to determine which test to use we need to determine if our data is normal and if they have equal variance. 
+
+
+```{r}
+
+unique(penguins$species)
+
+Adelie <- penguins %>%
+  filter(species == "Adelie")
+
+Chinstrap <- penguins %>%
+  filter(species == "Chinstrap")
+
+Adelie_n_Chinstrap <- penguins %>%
+  filter(species == "Adelie" | species == "Chinstrap")
+
+```
+
+To assess the normality of this data for our t-test, you can do this visually with a histogram as we did above, or if you want to use a statistical test, we can use a shapiro wilks test. This is for testing if there is normality in a set of continuous numeric data. If you are using different groups in your analysis, you will want to subset your data into your various groups and conduct a shapiro wilks test on each group. We are going to do this for each species of penguin to examine their flipper length.
+
+```{r}
+
+shapiro.test(Adelie$flipper_length_mm)
+
+ggplot(Adelie, aes(x = flipper_length_mm)) +
+  geom_histogram(bins = 20) + 
+  theme_classic()
+
+```
+
+
+```{r}
+
+shapiro.test(Chinstrap$flipper_length_mm)
+
+ggplot(Chinstrap, aes(x = flipper_length_mm)) +
+  geom_histogram(bins = 20) + 
+  theme_classic()
+
+```
+
+These results show us that the Adelie and Chinstrap data is normal (p > 0.05) and by looking at the histogram it is approximately normal, meaning it follows a nice bell shaped distribution.
+ 
+Now to test if there are even variances between the different groups, we can conduct a LeveneTest(). This does not need to be done on each subset of data, instead you can specify the variable ~ group.
+
+```{r}
+leveneTest(Adelie_n_Chinstrap$flipper_length_mm ~ Adelie_n_Chinstrap$species)
+```
+
+This test shows we have equal variance between our groups as our p-value is large (p > 0.05). 
+
+Our data meets the assumptions for a test, so we can go ahead and conduct this test. We will specify the variable ~ groups and which data set the variables are coming from. Finally we will specify that var.equal = TRUE which means we have equal variances, which we know based on the results of the Levene's test above. 
+
+```{r}
+
+t.test(flipper_length_mm ~ species , data = Adelie_n_Chinstrap,
+       var.equal = TRUE)
+
+```
+Here we can see that there is a very low p-value (p < 0.05) so there is a significant difference between the mean flipper length of Adelie and Chinstrap penguins. 
+
+
+**TASK**
+
+We can see by the means that Adelie have on average smaller flippers but you could also try plotting this with a boxplot to visualize it. Make a pretty boxplot to display this result.
+
+```{r, include = FALSE}
+ggplot(Adelie_n_Chinstrap, aes(x = species, y = flipper_length_mm, fill = species)) +
+  geom_boxplot() + 
+  theme_classic() +
+  labs(x = "Species", y = "Flipper Length (mm)")
+```
+
+
+********
+
+Now we were able to conduct a t-test becasue our data was normal and homoscedastic, but if it wasn't we would perform a Wilcoxon test instead. We can still do this, though it won't be as powerful as the t-test. To code this test, it will look a lot like the t-test, but using wilcox.test() and this test is examining if the medians are different between the two groups, instead of the means like a t-test is doing. 
+
+```{r}
+wilcox.test(flipper_length_mm ~ species , data = Adelie_n_Chinstrap)
+```
+This gives us the same result, that there is a difference in the median flipper length between penguin species (p < 0.05). 
+
+## ANOVA and Kruskal-Wallis tests
+
+Now a t-test and Wilcoxon test are great if you only have 2 groups, but often we have more than 2 groups, and that is where the ANOVA and Kruskal-Wallis tests come in. Because ANOVA is like a t-test but it can have 2 or more groups, we can examine all three penguin species. The Kruskal-Wallis test is the nonparametric equivalent of an ANOVA, so it does not require data to be normal or homoscedastic, and it is like the Wilcoxon test but with more than 2 groups. 
+
+In order to test the assumptions of our data (normality and homeostaticity) we could do what we did before, subset the groups and use a shapiro wilks test on each group, but just imagine if we had 10 groups, that would take forevvvvver. Instead we can build the ANOVA, and then plot and test the residuals. You can look more into the theory behind this, but by examining the residuals after being fit by the ANOVA, we can see if our data will follow a normal distribution and is homoscedastic without having to break it apart into each group. 
+
+To build the ANOVA, we will use the aov() and save it as an object. We will code the same kind of equation like we did with the t-test.
+
+```{r}
+
+penguin_aov <- aov(flipper_length_mm ~ species, data = penguins)
+
+```
+
+Now we can plot thi object and look at the first two plots
+
+```{r, fig.width=8, fig.height=8}
+par(mfrow = c(2,2)) # this will just output the plots together in a 2x2 grid
+plot(penguin_aov)
+```
+
+With the first plot, the residuals vs fitted plot, we are looking for the red line to be centered on 0, and for the data to be even below and above the red line, we don't want any kind of wedge shape going on. This shows our data meets the assumption of homoscedasticity visually. Then the second plot, we want our data to nicely follow that red 1:1 line. We don't want it to show an S shape. This plot shows our data meets the assumption of normality visually. This is the most common way that ecologists will check that their data meets the assumptions of statistical tests. 
+
+If we want to check these assumptions with a test, we can use the shapiro.test() and leveneTest() again, but this time the shapiro test will be on the residuals of the anova object.
+
+```{r}
+shapiro.test(penguin_aov$residuals)
+
+leveneTest(flipper_length_mm ~ species, data = penguins)
+```
+This test also shows that our data meets the assumptions of an ANOVA.
+
+Since we have already made the ANOVA object, we don't need to conduct the test again, but now we can call the results with the summary() of that ANOVA object. 
+
+```{r}
+
+summary(penguin_aov)
+
+```
+
+This pvalue for species is very small, showing that there is a significant difference in the mean flipper length of at least one species of penguin, but as you can see, we don't know where that difference is, or even how many there are. That is where the Tukey HSD test comes in, it will essentially do a bunch of pairwise t-tests to determine which groups differ from each other
+
+```{r}
+TukeyHSD(penguin_aov)
+
+plot(TukeyHSD(penguin_aov))
+```
+Now to tell if there are differences between each species pair, we look at the p adj column which shows the adjusted p value after accounting for this being a *post hoc* test (I suggest a little google to learn more about why this p value would be adjusted). All of these show as 0, which means they are really really small. So with p << 0.05 we can say there is a significant difference in flipper length between all 3 penguin species. 
+
+Just like with the t-test, because our data was normal and homoscedastic, it is more powerful to use an ANOVA, but we could also do a Kruskal-Wallis, which is the test you would use if your data was not normal or had uneven variances. 
+
+This code is super similar to the Wilcoxon rank sum test code and instead of a Tukey test we will use a Dunn Test, which is the nonparametric equivalent. For the Dunn test we will specify we want to use the bonferroni correction and that we want to view it in a list, this will make it look very similar to a Tukey test.
+
+```{r}
+penguin_kruskal <- kruskal.test(flipper_length_mm ~ species, data = penguins)
+penguin_kruskal
+
+dunn.test(penguins$flipper_length_mm, penguins$species, 
+          method = "bonferroni", list=TRUE)
+```
+
+And our results show that the median flipper length for each species pair is significantly different from the other since we have such small p values (p << 0.05)
+
+**TASK**
+
+Determine which test to use as you examine if there is a significant difference in body mass between penguin sex. Then plot this relationship with a boxplot
+
+```{r, include = FALSE}
+
+males <- penguins %>%
+  filter( sex == "male")
+
+shapiro.test(males$body_mass_g)
+
+wilcox.test(body_mass_g ~ sex, data = penguins)
+
+```
+
+
+*************
 
 ## cor.test
 
+If your data doesnt have groups, but is two continuous variables, one thing you can look at is if there is a correlation between the two variables. Now a correlation doesn't mean there is causation, so this test isn't looking at if one variable affects the other, its just looking at if the variables change together. 
+
+There are two kinds of correlation tests that we will discuss, parametric (Pearson) and nonparametric (Spearman). We will first determine if our two variables are normal and then decide which test to use. We will look at if beak length differs with flipper length for our penguins.
+
+```{r}
+shapiro.test(penguins$bill_length_mm)
+shapiro.test(penguins$flipper_length_mm)
+```
+These tests show that all our data together are not normally distributed for either variable (p < 0.05), so we will use the nonparametric correlation test the spearmans rank correlation
+
+```{r}
+cor.test(penguins$bill_length_mm, penguins$flipper_length_mm, method = "spearman")
+```
+This shows there is a significant correlation between bill length and flipper length. Now this doesnt mean larger bill length causes larger flipper length, that doesnt make sense anyway, it just means the two variables change together, which probably has something to do with penguins getting larger. 
+
+**TASK**
+
+Plot bill length by flipper length to see the correlation between the variables. You could even look into adding a line with geom_smooth() to the plot if you want for bonus learning.
+
+```{r, include = FALSE, warning= FALSE, message=FALSE}
+ggplot(penguins, aes(y = bill_length_mm, x = flipper_length_mm)) + 
+  geom_point(color = "darkgray") +
+  geom_smooth(method = "lm") + 
+  theme_classic() + 
+  labs(y = "Bill Length (mm)",
+       x = "Flipper Length (mm)")
+```
+**************
+
 ## regression
 
+The final stat we will discuss is a linear Regression or a linear model, lm(). This requires two normally distributed numeric variables and you are examining the effect that one variable has on the other variable. There is the implication of causation with this data so make sure you know which you are predicting will affect the other. 
+
+For this we are going to examine if flipper length is effected by body size. But first we will make the model, then check for normality and homoscedasticity of the residuals visually like we did with the anova.
+
+```{r, fig.width=8, fig.height=8}
+penguins_lm <- lm(flipper_length_mm ~ body_mass_g, data = penguins)
+
+
+par(mfrow = c(2,2))
+plot(penguins_lm)
+
+```
+
+Visually this is meeting the assumptions of this linear regression. Now we can call the summary of the model object.
+
+```{r}
+summary(penguins_lm)
+```
+
+This output is showing us that we have a significant effect of body mass on the flipper length of penguins (p < 0.05). 
+
+And if we plot this, or look at the sign of the Estimate value for body_mass_g, there is a positive relationship between the two. So as body size increases in penguins, so does their flipper length. 
+
+Another thing to look at with this output is the Adjusted R-squared value. This is telling us how much of the variation in our dependent variable (flipper length) is explained by our independent variable (body mass). For this model it is ~76% which for ecological/environmental data, is really good. 
+
+```{r, message = FALSE, warning=FALSE}
+ggplot(penguins, aes(x = body_mass_g, y = flipper_length_mm)) + 
+  geom_point(color = "darkgray") +
+  geom_smooth(method = "lm") + 
+  theme_classic() + 
+  labs(x = "Body Mass (g)",
+       y = "Flipper Length (mm)")
+```
+
+
+
 # Now What?
+
+Obviously this isn't a comprehensive tutorial on everything R and by now, maybe you are realizing just how much there is that you can learn about stats and coding in R. To give you some direction with how to continue to learn on your own I have complied some resources for you.
+
+- If you need help troubleshooting code, Stack Overflow is a great place to go to for worked through solutions (https://stackoverflow.com/)
+
+- www.datacamp.com
+
+- hadley.nz/
+
+- ourcodingclub.github.io/
+
+- r-graph-gallery.com/
+
+- posit.co/resources/cheatsheets/
+
