@@ -968,13 +968,15 @@ Obviously this isn't a comprehensive tutorial on everything R and by now, maybe 
 
 - If you need help troubleshooting code, Stack Overflow is a great place to go to for worked through solutions (https://stackoverflow.com/)
 
-- www.datacamp.com
+- https://www.datacamp.com/
 
-- hadley.nz/
+- https://r4ds.had.co.nz/index.html
 
-- ourcodingclub.github.io/
+- https://ourcodingclub.github.io/
 
-- r-graph-gallery.com/
+- https://r-graph-gallery.com/
 
-- posit.co/resources/cheatsheets/
+- https://posit.co/resources/cheatsheets/
+
+- https://www.quantitative-biology.ca/git-and-github.html
 
