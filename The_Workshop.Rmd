@@ -267,9 +267,9 @@ R can be used as a fancy calculator, and common math expressions will work withi
 
 * a + will add
 
-* exp() is an exponent
+* log() will take the log of a number
 
-* pi() is the complete unrounded pi
+* pi is the complete unrounded pi
 
 * brackets work using BEDMAS
 
