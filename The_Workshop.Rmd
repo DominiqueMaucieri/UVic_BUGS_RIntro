@@ -22,7 +22,7 @@ Welcome to this Introduction to R workshop.
 #setting global options
 knitr::opts_chunk$set(echo=TRUE, warning=FALSE, tidy = TRUE, message=FALSE)
 
-#To clear the workspace
+#To clear the work space
 rm(list = ls(all = T))
 
 ```
@@ -80,7 +80,7 @@ getwd() #where is my current working directory
 For me, this folder "UVIC_BUGS_RIntro" is the folder where I have put the script we are using for today's workshop and it is also where I have the data we are going to import for today's workshop. For you however, this might not be the right spot. So if we need to change the working directory, there are a few ways:
 
 
-1. Code. This is the toughest to work your head around but it works. You would use the setwd() and the file path to your script folder (this should also be where your data is, if not move your data into the same folder). You always put the filepath in quotations, and for my folder it would look like this:
+1. Code. This is the toughest to work your head around but it works. You would use the setwd() and the file path to your script folder (this should also be where your data is, if not move your data into the same folder). You always put the file path in quotations, and for my folder it would look like this:
 
 ```{r}
 setwd("~/Library/CloudStorage/Dropbox/Documents/GitHub/UVic_BUGS_RIntro")
@@ -123,13 +123,13 @@ Troubleshooting:
 
 - Always make sure the files are spelt the same way
 
-- Make sure you include the extention (.csv)
+- Make sure you include the extension (.csv)
 
 - Make sure it is in quotes
 
 Notice that we stored this data into an object called "shark_data". This should now show up in your environment window as data. This means that anywhere you use the word shark_data in your code after now, it will reference this data. 
 
-This data comes from the Living Planet Database (https://www.livingplanetindex.org/) and is a cleaned up version where I have subsetted out some shark abundance data for us to look at. 
+This data comes from the Living Planet Database (https://www.livingplanetindex.org/) and is a cleaned up version where I have subset out some shark abundance data for us to look at. 
 
 #### .excel
 
@@ -224,7 +224,7 @@ str(fruit)
 
 ```
 
-so leaf_length is a numeric vector and fruit is a character vector. To change to a different type of data you use as.******() with the asterics being the new data type. So as.numeric() or as.factor() etc. Lets turn fruit into a factor, and assign it to a new operator called fruit_fact
+so leaf_length is a numeric vector and fruit is a character vector. To change to a different type of data you use as.******() with the asterisks being the new data type. So as.numeric() or as.factor() etc. Lets turn fruit into a factor, and assign it to a new operator called fruit_fact
 
 ```{r}
 fruit_fact <- as.factor(fruit)
@@ -269,7 +269,7 @@ R can be used as a fancy calculator, and common math expressions will work withi
 
 * log() will take the log of a number
 
-* pi is the complete unrounded pi
+* pi is the complete un-rounded pi
 
 * brackets work using BEDMAS
 
@@ -460,7 +460,7 @@ Some important symbols for the filter() are:
 
 * "|" is or
 
-you can use any of these within the filter function to define what you are filterin out of a column. 
+you can use any of these within the filter function to define what you are filtering out of a column. 
 
 **TASK**
 
@@ -489,7 +489,7 @@ simple_shark_data <- select(shark_data, Common_name, Abundance)
 # you can list as many columns as you want, just make sure they are
 # spelled correctly and separated by a comma
 
-head(simple_shark_data) # this will show us the frist 6 rows of our data frame
+head(simple_shark_data) # this will show us the first 6 rows of our data frame
 
 shark_data_noID <- select(shark_data, -ID)
 
@@ -636,7 +636,7 @@ Hist_wrap <- ggplot(shark_data, aes(x = Abundance, fill = Region)) +
 Hist_wrap
 
 ```
-Beautiful! There are ways to customize which colors are used so if you are interested in that, I would recommend a little google. The final step will be to save this figure. We will use the jpeg() to save as it is very simple and we can customize the size, resolution and location we save the figure to. Since we are using jpeg() we will have to save our image with a .jpeg extension. You could use png() or tiff() just make sure you change the file extension. We will name the file Histogram_Example.jpeg, and specify the width and height in inches and a resolution in DPI. Then the next line is where we call the plot, and the final line is dev.off() which will just close the saving process. You have to run all the lines together for it to work best. This will save the figure right to your working directory, so make sure this is set right, and if you want it in a folder, make sure you change the filename to reflect that. 
+Beautiful! There are ways to customize which colors are used so if you are interested in that, I would recommend a little google. The final step will be to save this figure. We will use the jpeg() to save as it is very simple and we can customize the size, resolution and location we save the figure to. Since we are using jpeg() we will have to save our image with a .jpeg extension. You could use png() or tiff() just make sure you change the file extension. We will name the file Histogram_Example.jpeg, and specify the width and height in inches and a resolution in DPI. Then the next line is where we call the plot, and the final line is dev.off() which will just close the saving process. You have to run all the lines together for it to work best. This will save the figure right to your working directory, so make sure this is set right, and if you want it in a folder, make sure you change the file name to reflect that. 
 
 ```{r}
 jpeg(filename = "Histogram_Example.jpeg", 
@@ -675,7 +675,7 @@ Scatter_clean
 
 ## Box Plot
 
-Box plot will work the same way but instead of geom_histogram() or geom_point(), it is geom_boxplot() and it will use a fill aesthetic argument instead of color. Here we will plot abundance by country
+Box plot will work the same way but instead of geom_histogram() or geom_point(), it is geom_box plot() and it will use a fill aesthetic argument instead of color. Here we will plot abundance by country
 
 ```{r, fig.width=12}
 Boxplot_clean <- ggplot(shark_data, aes(x = Country, y = Abundance, fill = Region)) +
@@ -747,7 +747,7 @@ Adelie_n_Chinstrap <- penguins %>%
 
 ```
 
-To assess the normality of this data for our t-test, you can do this visually with a histogram as we did above, or if you want to use a statistical test, we can use a shapiro wilks test. This is for testing if there is normality in a set of continuous numeric data. If you are using different groups in your analysis, you will want to subset your data into your various groups and conduct a shapiro wilks test on each group. We are going to do this for each species of penguin to examine their flipper length.
+To assess the normality of this data for our t-test, you can do this visually with a histogram as we did above, or if you want to use a statistical test, we can use a Shapiro Wilks test. This is for testing if there is normality in a set of continuous numeric data. If you are using different groups in your analysis, you will want to subset your data into your various groups and conduct a Shapiro Wilks test on each group. We are going to do this for each species of penguin to examine their flipper length.
 
 ```{r}
 
@@ -793,7 +793,7 @@ Here we can see that there is a very low p-value (p < 0.05) so there is a signif
 
 **TASK**
 
-We can see by the means that Adelie have on average smaller flippers but you could also try plotting this with a boxplot to visualize it. Make a pretty boxplot to display this result.
+We can see by the means that Adelie have on average smaller flippers but you could also try plotting this with a box plot to visualize it. Make a pretty box plot to display this result.
 
 ```{r, include = FALSE}
 ggplot(Adelie_n_Chinstrap, aes(x = species, y = flipper_length_mm, fill = species)) +
@@ -805,7 +805,7 @@ ggplot(Adelie_n_Chinstrap, aes(x = species, y = flipper_length_mm, fill = specie
 
 ********
 
-Now we were able to conduct a t-test becasue our data was normal and homoscedastic, but if it wasn't we would perform a Wilcoxon test instead. We can still do this, though it won't be as powerful as the t-test. To code this test, it will look a lot like the t-test, but using wilcox.test() and this test is examining if the medians are different between the two groups, instead of the means like a t-test is doing. 
+Now we were able to conduct a t-test because our data was normal and homoscedastic, but if it wasn't we would perform a Wilcoxon test instead. We can still do this, though it won't be as powerful as the t-test. To code this test, it will look a lot like the t-test, but using wilcox.test() and this test is examining if the medians are different between the two groups, instead of the means like a t-test is doing. 
 
 ```{r}
 wilcox.test(flipper_length_mm ~ species , data = Adelie_n_Chinstrap)
@@ -816,7 +816,7 @@ This gives us the same result, that there is a difference in the median flipper 
 
 Now a t-test and Wilcoxon test are great if you only have 2 groups, but often we have more than 2 groups, and that is where the ANOVA and Kruskal-Wallis tests come in. Because ANOVA is like a t-test but it can have 2 or more groups, we can examine all three penguin species. The Kruskal-Wallis test is the nonparametric equivalent of an ANOVA, so it does not require data to be normal or homoscedastic, and it is like the Wilcoxon test but with more than 2 groups. 
 
-In order to test the assumptions of our data (normality and homeostaticity) we could do what we did before, subset the groups and use a shapiro wilks test on each group, but just imagine if we had 10 groups, that would take forevvvvver. Instead we can build the ANOVA, and then plot and test the residuals. You can look more into the theory behind this, but by examining the residuals after being fit by the ANOVA, we can see if our data will follow a normal distribution and is homoscedastic without having to break it apart into each group. 
+In order to test the assumptions of our data (normality and homeostaticity) we could do what we did before, subset the groups and use a Shapiro Wilks test on each group, but just imagine if we had 10 groups, that would take forevvvvver. Instead we can build the ANOVA, and then plot and test the residuals. You can look more into the theory behind this, but by examining the residuals after being fit by the ANOVA, we can see if our data will follow a normal distribution and is homoscedastic without having to break it apart into each group. 
 
 To build the ANOVA, we will use the aov() and save it as an object. We will code the same kind of equation like we did with the t-test.
 
@@ -826,7 +826,7 @@ penguin_aov <- aov(flipper_length_mm ~ species, data = penguins)
 
 ```
 
-Now we can plot thi object and look at the first two plots
+Now we can plot this object and look at the first two plots
 
 ```{r, fig.width=8, fig.height=8}
 par(mfrow = c(2,2)) # this will just output the plots together in a 2x2 grid
@@ -835,7 +835,7 @@ plot(penguin_aov)
 
 With the first plot, the residuals vs fitted plot, we are looking for the red line to be centered on 0, and for the data to be even below and above the red line, we don't want any kind of wedge shape going on. This shows our data meets the assumption of homoscedasticity visually. Then the second plot, we want our data to nicely follow that red 1:1 line. We don't want it to show an S shape. This plot shows our data meets the assumption of normality visually. This is the most common way that ecologists will check that their data meets the assumptions of statistical tests. 
 
-If we want to check these assumptions with a test, we can use the shapiro.test() and leveneTest() again, but this time the shapiro test will be on the residuals of the anova object.
+If we want to check these assumptions with a test, we can use the Shapiro.test() and leveneTest() again, but this time the Shapiro test will be on the residuals of the anova object.
 
 ```{r}
 shapiro.test(penguin_aov$residuals)
@@ -852,7 +852,7 @@ summary(penguin_aov)
 
 ```
 
-This pvalue for species is very small, showing that there is a significant difference in the mean flipper length of at least one species of penguin, but as you can see, we don't know where that difference is, or even how many there are. That is where the Tukey HSD test comes in, it will essentially do a bunch of pairwise t-tests to determine which groups differ from each other
+This p-value for species is very small, showing that there is a significant difference in the mean flipper length of at least one species of penguin, but as you can see, we don't know where that difference is, or even how many there are. That is where the Tukey HSD test comes in, it will essentially do a bunch of pairwise t-tests to determine which groups differ from each other
 
 ```{r}
 TukeyHSD(penguin_aov)
@@ -877,7 +877,7 @@ And our results show that the median flipper length for each species pair is sig
 
 **TASK**
 
-Determine which test to use as you examine if there is a significant difference in body mass between penguin sex. Then plot this relationship with a boxplot
+Determine which test to use as you examine if there is a significant difference in body mass between penguin sex. Then plot this relationship with a box plot
 
 ```{r, include = FALSE}
 
@@ -895,7 +895,7 @@ wilcox.test(body_mass_g ~ sex, data = penguins)
 
 ## cor.test
 
-If your data doesnt have groups, but is two continuous variables, one thing you can look at is if there is a correlation between the two variables. Now a correlation doesn't mean there is causation, so this test isn't looking at if one variable affects the other, its just looking at if the variables change together. 
+If your data doesn't have groups, but is two continuous variables, one thing you can look at is if there is a correlation between the two variables. Now a correlation doesn't mean there is causation, so this test isn't looking at if one variable affects the other, its just looking at if the variables change together. 
 
 There are two kinds of correlation tests that we will discuss, parametric (Pearson) and nonparametric (Spearman). We will first determine if our two variables are normal and then decide which test to use. We will look at if beak length differs with flipper length for our penguins.
 
@@ -903,12 +903,12 @@ There are two kinds of correlation tests that we will discuss, parametric (Pears
 shapiro.test(penguins$bill_length_mm)
 shapiro.test(penguins$flipper_length_mm)
 ```
-These tests show that all our data together are not normally distributed for either variable (p < 0.05), so we will use the nonparametric correlation test the spearmans rank correlation
+These tests show that all our data together are not normally distributed for either variable (p < 0.05), so we will use the nonparametric correlation test the Spearman's rank correlation
 
 ```{r}
 cor.test(penguins$bill_length_mm, penguins$flipper_length_mm, method = "spearman")
 ```
-This shows there is a significant correlation between bill length and flipper length. Now this doesnt mean larger bill length causes larger flipper length, that doesnt make sense anyway, it just means the two variables change together, which probably has something to do with penguins getting larger. 
+This shows there is a significant correlation between bill length and flipper length. Now this doesn't mean larger bill length causes larger flipper length, that doesn't make sense anyway, it just means the two variables change together, which probably has something to do with penguins getting larger. 
 
 **TASK**
 
